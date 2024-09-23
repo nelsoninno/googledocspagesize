@@ -1,0 +1,242 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <base target="_top">
+  <style>
+    body {
+      font-family: Arial, sans-serif;
+      padding: 10px;
+    }
+    .input-group {
+      margin-bottom: 15px;
+    }
+    label {
+      display: flex;
+      align-items: center;
+      margin-right: 10px;
+    }
+    .input-group .inputs {
+      display: block; /* Force inputs to a new line */
+      margin-top: 5px; /* Optional: Adds some spacing between the label and the input */
+    }
+    .inputs-container {
+      display: flex;
+      align-items: center;
+    }
+    .inputs-container input[type="number"] {
+      margin-right: 5px; /* Adjusts the space between the inputs and unit texts */
+      width: 50px; /* Shortened input field width */
+    }
+    #preview {
+      border: 1px solid #ccc;
+      margin-top: 10px;
+      position: relative;
+    }
+    #previewInner {
+      background-color: #4285f4;
+      position: absolute;
+      top: 50%;
+      left: 50%;
+      transform: translate(-50%, -50%);
+    }
+    button {
+      margin-top: 10px;
+      padding: 5px 10px;
+    }
+    #message {
+      margin-top: 10px;
+      color: green;
+    }
+    .footer {
+      margin-top: 20px;
+      font-size: 1.0em;
+      text-align: center;
+    }
+    .thank-image {
+      margin-top: 20px;
+      width: 150px;
+      height: auto;
+      display: block;
+      margin-left: auto;
+      margin-right: auto; /* Center the image */
+    }
+    .centered-content {
+      text-align: center; /* Center align all elements from this point onward */
+      font-size: 1.0em;
+    }
+    .donation-text {
+      text-align: center;
+      margin-top: 20px;
+    }
+    .donation-image {
+      margin-top: 10px;
+      width: 150px;
+      height: auto;
+      display: block;
+      margin-left: auto;
+      margin-right: auto; /* Center the image */
+    }
+    .thank-you-text {
+      text-align: center;
+      margin-top: 20px;
+      font-weight: bold;
+    }
+  </style>
+</head>
+<body>
+  <h2>Change the Page Size</h2>
+  
+  <div class="input-group">
+    <label for="widthCm">Width: .
+      <img src="https://i.ibb.co/gjVX5Jf/width.png" alt="Width Icon" style="width: 13px;"> <!-- 30% smaller -->
+    </label>
+    <div class="inputs">
+      <div class="inputs-container">
+        <input type="number" id="widthCm" step="0.01"> cm .
+        <input type="number" id="widthInch" step="0.01"> in
+      </div>
+    </div>
+  </div>
+  
+  <div class="input-group">
+    <label for="heightCm">Height: .
+      <img src="https://i.ibb.co/m0hZ5SZ/height.png" alt="Height Icon" style="width: 20px;">
+    </label>
+    <div class="inputs">
+      <div class="inputs-container">
+        <input type="number" id="heightCm" step="0.01"> cm .
+        <input type="number" id="heightInch" step="0.01"> in
+      </div>
+    </div>
+  </div>
+  
+  <div class="centered-content">
+    <h3>Dimensions Preview</h3>
+    <div id="preview">
+      <div id="previewInner"></div>
+    </div>
+
+    <button id="resizeBtn">Resize</button>
+  
+    <div id="message"></div>
+  </div>
+
+  <div class="footer">
+    <p>This app was created so that you don't have to pay for something that should be for free.</p>
+    <p>Please, if you want to thank the developer Nelson Inno, you can follow him on LinkedIn.</p>
+    <button id="sayThanksBtn">Say Thanks</button>
+
+    <!-- Image centered below the "Say Thanks" button -->
+    <img src="https://i.ibb.co/rt1CgyH/Nelson-SQ-Zoomed-Blockchance-2.jpg" alt="Nelson Inno" class="thank-image">
+  </div>
+
+  <!-- Donation text and image for Bitcoin Lightning -->
+  <div class="donation-text">
+    <p>If you prefer to make a tiny donation, you can use Bitcoin Lightning to send me some sats with the QR below.</p>
+    <img src="https://i.ibb.co/tMXjGFk/IMG-8948.jpg" alt="Bitcoin Lightning Donation QR" class="donation-image">
+  </div>
+
+  <!-- Thank You text -->
+  <div class="thank-you-text">
+    Thank You!
+  </div>
+
+  <script src="https://cdn.jsdelivr.net/npm/feather-icons/dist/feather.min.js"></script>
+  
+  <!-- JavaScript code -->
+  <script>
+    // Conversion factors
+    const CM_TO_INCH = 0.393701;
+    const INCH_TO_CM = 2.54;
+
+    // Wait for DOM to load
+    window.onload = function() {
+      const widthCmInput = document.getElementById('widthCm');
+      const widthInchInput = document.getElementById('widthInch');
+      const heightCmInput = document.getElementById('heightCm');
+      const heightInchInput = document.getElementById('heightInch');
+      const preview = document.getElementById('preview');
+      const previewInner = document.getElementById('previewInner');
+      const resizeBtn = document.getElementById('resizeBtn');
+      const sayThanksBtn = document.getElementById('sayThanksBtn');
+      const message = document.getElementById('message');
+
+      // Initialize with A4 size
+      widthCmInput.value = '21.0';
+      heightCmInput.value = '29.7';
+      updateInchInputs();
+      updatePreview();
+
+      // Event listeners
+      widthCmInput.addEventListener('input', () => {
+        widthInchInput.value = (parseFloat(widthCmInput.value) * CM_TO_INCH).toFixed(2);
+        updatePreview();
+      });
+
+      widthInchInput.addEventListener('input', () => {
+        widthCmInput.value = (parseFloat(widthInchInput.value) * INCH_TO_CM).toFixed(2);
+        updatePreview();
+      });
+
+      heightCmInput.addEventListener('input', () => {
+        heightInchInput.value = (parseFloat(heightCmInput.value) * CM_TO_INCH).toFixed(2);
+        updatePreview();
+      });
+
+      heightInchInput.addEventListener('input', () => {
+        heightCmInput.value = (parseFloat(heightInchInput.value) * INCH_TO_CM).toFixed(2);
+        updatePreview();
+      });
+
+      resizeBtn.addEventListener('click', resizePage);
+
+      sayThanksBtn.addEventListener('click', () => {
+        window.open('https://www.linkedin.com/in/nelsoninno/', '_blank');
+      });
+
+      function updateInchInputs() {
+        widthInchInput.value = (parseFloat(widthCmInput.value) * CM_TO_INCH).toFixed(2);
+        heightInchInput.value = (parseFloat(heightCmInput.value) * CM_TO_INCH).toFixed(2);
+      }
+
+      function updatePreview() {
+        const maxPreviewWidth = 200;
+        const maxPreviewHeight = 150;
+        const widthCm = parseFloat(widthCmInput.value);
+        const heightCm = parseFloat(heightCmInput.value);
+
+        const ratio = Math.min(maxPreviewWidth / widthCm, maxPreviewHeight / heightCm);
+
+        preview.style.width = `${maxPreviewWidth}px`;
+        preview.style.height = `${maxPreviewHeight}px`;
+
+        previewInner.style.width = `${widthCm * ratio}px`;
+        previewInner.style.height = `${heightCm * ratio}px`;
+      }
+
+      function resizePage() {
+        const width = parseFloat(widthCmInput.value);
+        const height = parseFloat(heightCmInput.value);
+
+        google.script.run
+          .withSuccessHandler(showMessage)
+          .withFailureHandler(showError)
+          .resizeDocument(width, height);
+      }
+
+      function showMessage(msg) {
+        message.style.color = 'green';
+        message.textContent = msg;
+      }
+
+      function showError(error) {
+        message.style.color = 'red';
+        message.textContent = 'Error: ' + error.message;
+      }
+
+      // Initialize Feather icons
+      feather.replace();
+    };
+  </script>
+</body>
+</html>
